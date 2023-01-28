@@ -1,4 +1,4 @@
-FROM golang:1.18-rc-stretch
+FROM golang:1.20rc2-bullseye
 
 ADD ./ /src
 WORKDIR /src
