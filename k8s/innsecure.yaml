@@ -32,11 +32,33 @@ spec:
         app: innsecure
     spec:
       containers:
-        - name: innsecure
+       - name: innsecure
           image: form3/innsecure
-          imagePullPolicy: Never
+          livenessProbe: 
+          httpGet:
+          path: /prodhealth
+          port: 8080
+          resources:
+          limits:
+            cpu: 2
+            memory: 200Mi
+          requests:
+            cpu: 100m
+            memory: 200Mi
+         securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          runAsGroup: 2001
+          runAsUser: 1001
+        volumeMounts:
+        - mountPath: /certs
+          name: kubernetes-dashboard-certs
+        - mountPath: /tmp
+          name: tmp-volume
+
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
           envFrom:
             - configMapRef:
-                name: innsecure-config
+                name: innsecure-config        
