@@ -1,4 +1,4 @@
----
+
 apiVersion: v1
 kind: Service
 metadata:
@@ -14,7 +14,6 @@ spec:
       protocol: TCP
   selector:
     app: innsecure
-
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -32,19 +31,25 @@ spec:
     metadata:
       labels:
         app: innsecure
-  spec: null
+  spec: {}
 containers:
-  - name: innsecure
-    image: form3/innsecure
-    volumeMounts:
-      - name: form3vol
-        mountPath: /form3/example
+- name: innsecure
+  image: form3/innsecure
+  imagePullPolicy: 'Always'
 securityContext:
-  imagePullPolicy: Always
-  allowPrivilegeEscalation: false
-  runAsUser: 2000
+  securityContext.runAsNonRoot : 'true'
+  allowPrivilegeEscalation: 'false'
+  readOnlyRootFilesystem: 'true' 
+resources:
+      limits:
+        cpu: "1"
+      requests:
+        cpu: "0.5"
+volumeMounts:
+    - name: form3vol
+      mountPath: /form3/example
 ports:
-  - containerPort: 8080
-envFrom:
-  - configMapRef:
-      name: innsecure-config
+       - containerPort: 8080
+         envFrom:
+       - configMapRef:
+         name: innsecure-config
